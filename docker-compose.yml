@@ -1,0 +1,47 @@
+name: forrocwb.api
+
+services:
+  api:
+    image: agenciaboz/forrocwb.api
+    container_name: forrocwb.api
+    environment:
+      - PORT=8105
+      - DATABASE_URL=mysql://boz:ewhblt69@mysql:3306/forrocwb?connection_limit=20&socketTimeout=30
+      - URL=https://forrocwb.nandoburgos.dev
+    ports:
+      - "8105:8105"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    volumes:
+      - static_volume:/app/static
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.5'
+    #       memory: 1512M
+
+  mysql:
+    image: mysql:8.0.42
+    container_name: mysql
+    environment:
+      - MYSQL_DATABASE=forrocwb
+      - MYSQL_USER=boz
+      - MYSQL_PASSWORD=ewhblt69
+      - MYSQL_ROOT_PASSWORD=ewhblt69
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/custom.cnf
+    ports:
+      - "4306:3306"
+    restart: unless-stopped
+
+volumes:
+  static_volume:
+    name: "forrocwb_static_files"
+  mysql-data:
+    name: "forrocwb_mysql_data"
+
+networks:
+  default:
+    name: forrocwb_network
