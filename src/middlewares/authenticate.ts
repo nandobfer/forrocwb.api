@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 
 export interface AuthenticatedRequest extends Request {
-    userId: string | null
+    userId?: string | null
 }
 
 export const authenticate = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {

@@ -5,7 +5,7 @@ import { uid } from "uid"
 
 export type UserPrisma = Prisma.UserGetPayload<{}>
 
-export type UserForm = Omit<WithoutFunctions<User>, "id">
+export type UserForm = Omit<WithoutFunctions<User>, "id"> & {password: string}
 
 export interface LoginForm {
     login: string
@@ -16,7 +16,7 @@ export class User {
     id: string
     name: string
     email: string
-    password: string
+    // password: string
     phone: string
     admin: boolean
 
@@ -68,7 +68,7 @@ export class User {
         this.id = data.id
         this.name = data.name
         this.email = data.email
-        this.password = data.password
+        // this.password = data.password
         this.admin = data.admin
         this.phone = data.phone
     }
@@ -77,12 +77,12 @@ export class User {
         this.id = data.id
         this.name = data.name
         this.email = data.email
-        this.password = data.password
+        // this.password = data.password
         this.admin = data.admin
         this.phone = data.phone
     }
 
-    async update(data: Partial<User>) {
+    async update(data: Partial<UserForm>) {
         const updated = await prisma.user.update({
             where: { id: this.id },
             data: {
