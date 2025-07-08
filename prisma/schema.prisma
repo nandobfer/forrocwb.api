@@ -17,22 +17,11 @@ model User {
     admin     Boolean   @default(false)
 }
 
-model Location {
-    id        String  @id
-    street    String
-    district  String
-    number    String
-    cep       String
-    complement String?
-    events   Event[]
-}
-
 model Artist {
     id          String  @id
     name        String
     description String
-    bandId      String?
-    band        Band?   @relation(fields: [bandId], references: [id])
+    bands       Band[]
     events      Event[]
 }
 
@@ -50,9 +39,7 @@ model Event {
     description String
     datetime    String
     price       Float
-
-    locationId  String
-    location    Location @relation(fields: [locationId], references: [id])
+    location    Json
 
     bands     Band[]
     artists   Artist[]
