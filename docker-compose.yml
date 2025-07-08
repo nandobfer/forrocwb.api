@@ -8,6 +8,7 @@ services:
       - PORT=4105
       - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/forrocwb
       - URL=https://forrocwb.nandoburgos.dev
+      - JWT_SECRET=0IGSGJ0IWOsdljfo
     ports:
       - "4105:4105"
     network_mode: "host"
