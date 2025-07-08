@@ -9,8 +9,51 @@ generator client {
 }
 
 model User {
-    id        String   @id @default(cuid())
-    name      String?
-    email     String   @unique
+    id        String    @id
+    name      String
+    email     String    @unique
     password  String
+    phone     String
+    admin     Boolean   @default(false)
+}
+
+model Location {
+    id        String  @id
+    street    String
+    district  String
+    number    String
+    cep       String
+    complement String?
+    events   Event[]
+}
+
+model Artist {
+    id          String  @id
+    name        String
+    description String
+    bandId      String?
+    band        Band?   @relation(fields: [bandId], references: [id])
+    events      Event[]
+}
+
+model Band {
+    id          String  @id
+    name        String
+    description String
+    artists     Artist[]
+    events      Event[]
+}
+
+model Event {
+    id          String  @id
+    title       String
+    description String
+    datetime    String
+    price       Float
+
+    locationId  String
+    location    Location @relation(fields: [locationId], references: [id])
+
+    bands     Band[]
+    artists   Artist[]
 }

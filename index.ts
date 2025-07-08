@@ -6,8 +6,6 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import http from "http"
 import fileUpload from "express-fileupload"
-import { Nagazap } from "./src/class/Nagazap"
-import { Washima } from "./src/class/Washima/Washima"
 import express_prom_bundle from "express-prom-bundle"
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -61,6 +59,4 @@ server.setTimeout(1000 * 60 * 60)
 
 server.listen(port, () => {
     console.log(`[server]: Server is running at http://${port}`)
-    Washima.initialize()
-    Nagazap.initialize()
 })

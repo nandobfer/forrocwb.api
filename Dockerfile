@@ -14,6 +14,7 @@ RUN npm prune --production
 FROM node:22
 WORKDIR /app
 
+COPY package*.json ./
 # Copy node modules and build from the build stage
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
