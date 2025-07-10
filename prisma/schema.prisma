@@ -40,6 +40,7 @@ model Event {
     datetime    String
     price       Float
     location    Json
+    week        Int
 
     bands     Band[]
     artists   Artist[]

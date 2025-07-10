@@ -27,6 +27,7 @@ export class Event {
     datetime: string
     price: number
     location: Location
+    week: number
     bands: Band[]
     artists: Artist[]
 
@@ -42,6 +43,8 @@ export class Event {
     }
 
     static async new(data: EventForm) {
+        const date = new Date(Number(data.datetime))
+
         const new_event = await prisma.event.create({
             data: {
                 id: uid(),
@@ -65,6 +68,7 @@ export class Event {
         this.description = data.description
         this.datetime = data.datetime
         this.price = data.price
+        this.week = data.week
         this.location = JSON.parse(data.location as string)
         this.bands = data.bands.map((item) => new Band(item))
         this.artists = data.artists.map((item) => new Artist(item))
@@ -76,6 +80,7 @@ export class Event {
         this.description = data.description
         this.datetime = data.datetime
         this.price = data.price
+        this.week = data.week
         this.location = JSON.parse(data.location as string)
         this.bands = data.bands.map((item) => new Band(item))
         this.artists = data.artists.map((item) => new Artist(item))
