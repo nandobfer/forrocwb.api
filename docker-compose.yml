@@ -5,12 +5,12 @@ services:
     image: nandobfer/forrocwb.api
     container_name: forrocwb.api
     environment:
-      - PORT=4105
+      - PORT=4545
       - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/forrocwb
       - URL=https://forrocwb.nandoburgos.dev
       - JWT_SECRET=0IGSGJ0IWOsdljfo
     ports:
-      - "4105:4105"
+      - "4545:4545"
     network_mode: "host"
     restart: unless-stopped
     volumes:

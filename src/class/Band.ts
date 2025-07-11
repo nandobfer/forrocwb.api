@@ -3,15 +3,25 @@ import { prisma } from "../prisma"
 import { uid } from "uid"
 import { Artist } from "./Artist"
 import { Event, event_include } from "./Event"
+import { UploadedFile } from "express-fileupload"
+import { saveFile } from "../tools/saveFile"
 
 export const band_include = Prisma.validator<Prisma.BandInclude>()({ artists: true })
 export type BandPrisma = Prisma.BandGetPayload<{ include: typeof band_include }>
-export type BandForm = Omit<Band, "id">
+export interface BandForm {
+    name: string
+    description?: string
+    image?: string
+    instagram?: string
+    artists?: Artist[]
+}
 
 export class Band {
     id: string
     name: string
-    description: string
+    description: string | null
+    image: string | null
+    instagram: string | null
     artists: Artist[]
 
     static async new(data: BandForm) {
@@ -19,8 +29,6 @@ export class Band {
             data: {
                 id: uid(),
                 name: data.name,
-                description: data.description,
-                artists: { connect: data.artists.map((artist) => ({ id: artist.id })) },
             },
             include: band_include,
         })
@@ -44,6 +52,8 @@ export class Band {
         this.name = data.name
         this.description = data.description
         this.artists = data.artists.map((artist) => new Artist(artist))
+        this.image = data.image
+        this.instagram = data.instagram
     }
 
     load(data: BandPrisma) {
@@ -51,6 +61,8 @@ export class Band {
         this.name = data.name
         this.description = data.description
         this.artists = data.artists.map((artist) => new Artist(artist))
+        this.image = data.image
+        this.instagram = data.instagram
     }
 
     async update(data: Partial<BandForm>) {
@@ -59,11 +71,19 @@ export class Band {
             data: {
                 name: data.name,
                 description: data.description,
+                image: data.image,
+                instagram: data.instagram,
                 artists: data.artists ? { set: [], connect: data.artists.map((artist) => ({ id: artist.id })) } : undefined,
             },
             include: band_include,
         })
         this.load(result)
+    }
+    async updateImage(file: UploadedFile) {
+        const { url } = saveFile(`/bands/${this.id}`, { name: file.name, file: file.data })
+        await this.update({ image: url })
+
+        return url
     }
 
     async getEvents() {
@@ -72,5 +92,10 @@ export class Band {
             include: event_include,
         })
         return result.map((item) => new Event(item))
+    }
+
+    async delete() {
+        const result = await prisma.band.delete({ where: { id: this.id } })
+        return true
     }
 }

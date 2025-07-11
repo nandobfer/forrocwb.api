@@ -2,10 +2,11 @@ import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma"
 import { WithoutFunctions } from "./helpers"
 import { uid } from "uid"
+import { Log, LogForm } from "./Log"
 
 export type UserPrisma = Prisma.UserGetPayload<{}>
 
-export type UserForm = Omit<WithoutFunctions<User>, "id"> & {password: string}
+export type UserForm = Omit<WithoutFunctions<User>, "id"> & { password: string }
 
 export interface LoginForm {
     login: string
@@ -95,5 +96,21 @@ export class User {
         })
 
         this.load(updated)
+    }
+
+    async log(data: LogForm) {
+        const result = await prisma.log.create({
+            data: {
+                datetime: new Date().getTime().toString(),
+                action: data.action,
+                message: data.message,
+                request_ip: data.request_ip || null,
+                admin_id: this.id,
+                admin_name: this.name,
+                target: data.target,
+            },
+        })
+        const log = new Log(result)
+        return log
     }
 }

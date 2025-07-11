@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express"
-import { LoginForm, User } from "../../class/User"
 import jwt from "jsonwebtoken"
+import { LoginForm, User } from "../class/User"
 
 const router = express.Router()
 

@@ -1,5 +1,5 @@
-export function getWeekNumber(timestamp: number) {
-    const date = new Date(timestamp);
+export function getWeekNumber(timestamp: number | string) {
+    const date = new Date(Number(timestamp));
     // Get the day of week (0=Sun, 1=Mon, ..., 6=Sat)
     const day = date.getUTCDay();
     // Calculate how many days to subtract to get to Monday
@@ -13,5 +13,5 @@ export function getWeekNumber(timestamp: number) {
     const firstMonday = new Date(Date.UTC(1970, 0, 5));
     
     // Calculate full weeks between dates
-    return Math.floor((monday - firstMonday) / (7 * 24 * 60 * 60 * 1000));
+    return Math.floor((monday.getTime() - firstMonday.getTime()) / (7 * 24 * 60 * 60 * 1000));
 }

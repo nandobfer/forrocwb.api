@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
+import { User } from "../class/User"
 
 export interface AuthenticatedRequest extends Request {
-    userId?: string | null
+    user?: User | null
+    clientIp?: string
 }
 
 export const authenticate = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
@@ -23,7 +25,8 @@ export const authenticate = async (request: AuthenticatedRequest, response: Resp
     const token = spllited[1]
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
-        request.userId = decoded.id
+        request.user = await User.findById(decoded.id)
+        request.clientIp = request.headers["x-forwarded-for"]?.toString() || request.ip
         next()
     } catch (error) {
         reject()

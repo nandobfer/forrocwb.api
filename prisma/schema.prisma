@@ -20,7 +20,10 @@ model User {
 model Artist {
     id          String  @id
     name        String
-    description String
+    description String?
+    image       String?
+    instagram   String?
+    birthdate   String?
     bands       Band[]
     events      Event[]
 }
@@ -28,7 +31,9 @@ model Artist {
 model Band {
     id          String  @id
     name        String
-    description String
+    description String?
+    image       String?
+    instagram   String?
     artists     Artist[]
     events      Event[]
 }
@@ -41,7 +46,19 @@ model Event {
     price       Float
     location    Json
     week        Int
+    image       String?
 
     bands     Band[]
     artists   Artist[]
+}
+
+model Log {
+    id          Int      @id @default(autoincrement())
+    datetime    String
+    action      String
+    target      String
+    message     String   @db.Text
+    request_ip  String?
+    admin_id    String
+    admin_name  String
 }

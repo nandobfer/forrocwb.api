@@ -3,24 +3,31 @@ import { prisma } from "../prisma"
 import { uid } from "uid"
 import { Band, band_include } from "./Band"
 import { Event, event_include } from "./Event"
+import { UploadedFile } from "express-fileupload"
+import { saveFile } from "../tools/saveFile"
 
 export type ArtistPrisma = Prisma.ArtistGetPayload<{}>
 export interface ArtistForm {
     name: string
-    description: string
+    description?: string
+    image?: string
+    instagram?: string
+    birthdate?: string
 }
 
 export class Artist {
     id: string
     name: string
-    description: string
+    description: string | null
+    image: string | null
+    instagram: string | null
+    birthdate: string | null
 
     static async new(data: ArtistForm) {
         const new_artist = await prisma.artist.create({
             data: {
                 id: uid(),
                 name: data.name,
-                description: data.description,
             },
         })
 
@@ -42,23 +49,39 @@ export class Artist {
         this.id = data.id
         this.name = data.name
         this.description = data.description
+        this.birthdate = data.birthdate
+        this.image = data.image
+        this.instagram = data.instagram
     }
 
     load(data: ArtistPrisma) {
         this.id = data.id
         this.name = data.name
         this.description = data.description
+        this.birthdate = data.birthdate
+        this.image = data.image
+        this.instagram = data.instagram
     }
 
-    async update(data: Partial<Artist>) {
+    async update(data: Partial<ArtistForm>) {
         const result = await prisma.artist.update({
             where: { id: this.id },
             data: {
                 name: data.name,
                 description: data.description,
+                birthdate: data.birthdate,
+                image: data.image,
+                instagram: data.instagram,
             },
         })
         this.load(result)
+    }
+
+    async updateImage(file: UploadedFile) {
+        const { url } = saveFile(`/artists/${this.id}`, { name: file.name, file: file.data })
+        await this.update({ image: url })
+
+        return url
     }
 
     async getBands() {
@@ -72,5 +95,10 @@ export class Artist {
             include: event_include,
         })
         return result.map((item) => new Event(item))
+    }
+
+    async delete() {
+        const result = await prisma.artist.delete({ where: { id: this.id } })
+        return true
     }
 }
