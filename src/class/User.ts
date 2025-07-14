@@ -13,6 +13,12 @@ export interface LoginForm {
     password: string
 }
 
+export interface AccessToken {
+    value: string
+    exp: number
+    iat: number
+}
+
 export class User {
     id: string
     name: string
