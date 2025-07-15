@@ -47,6 +47,7 @@ model Event {
     location    Json
     week        Int
     image       String?
+    ticketUrl   String?
 
     bands     Band[]
     artists   Artist[]

@@ -33,6 +33,7 @@ export class Event {
     bands: Band[]
     artists: Artist[]
     image: string | null
+    ticketUrl: string | null
 
     static async getWeek(week: number | string) {
         const result = await prisma.event.findMany({ where: { week: Number(week) }, include: event_include })
@@ -62,6 +63,7 @@ export class Event {
                 description: data.description,
                 datetime: data.datetime,
                 price: data.price,
+                ticketUrl: data.ticketUrl,
                 week: getWeekNumber(data.datetime),
                 location: JSON.stringify(data.location),
                 bands: { connect: data.bands.map((band) => ({ id: band.id })) },
@@ -90,6 +92,7 @@ export class Event {
         this.bands = data.bands.map((item) => new Band(item))
         this.artists = data.artists.map((item) => new Artist(item))
         this.image = data.image
+        this.ticketUrl = data.ticketUrl
     }
 
     load(data: EventPrisma) {
@@ -103,6 +106,7 @@ export class Event {
         this.bands = data.bands.map((item) => new Band(item))
         this.artists = data.artists.map((item) => new Artist(item))
         this.image = data.image
+        this.ticketUrl = data.ticketUrl
     }
 
     async update(data: Partial<EventForm>) {
@@ -113,6 +117,7 @@ export class Event {
                 description: data.description,
                 datetime: data.datetime,
                 price: data.price,
+                ticketUrl: data.ticketUrl,
                 week: data.datetime ? getWeekNumber(data.datetime) : undefined,
                 location: JSON.stringify(data.location),
                 bands: data.bands ? { set: [], connect: data.bands.map((band) => ({ id: band.id })) } : undefined,
