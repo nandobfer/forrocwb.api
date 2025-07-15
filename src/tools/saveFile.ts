@@ -2,6 +2,7 @@ import { createWriteStream, existsSync, mkdirSync } from "fs"
 import { join } from "path"
 import { FileUpload } from "../class/helpers"
 import { getLocalUrl } from "./getLocalUrl"
+import { slugify } from "./slugify"
 
 const getBuffer = (file: FileUpload) => {
     if (file.base64) {
@@ -18,7 +19,7 @@ export const saveFile = (path: string, file: FileUpload, callback?: () => void) 
         mkdirSync(uploadDir, { recursive: true })
     }
 
-    const filepath = join(uploadDir, file.name)
+    const filepath = join(uploadDir, slugify(file.name))
     createWriteStream(filepath).write(buffer, () => {
         if (callback) callback()
     })
