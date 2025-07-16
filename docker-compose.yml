@@ -2,12 +2,12 @@ name: forrocwb.api
 
 services:
   api:
-    image: nandobfer/forrocwb.api
+    image: nandoburgos/forrocwb.api
     container_name: forrocwb.api
     environment:
       - PORT=4545
       - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/forrocwb
-      - URL=https://forrocwb.nandoburgos.dev
+      - URL=https://api-forrocwb.nandoburgos.dev
       - JWT_SECRET=0IGSGJ0IWOsdljfo
     ports:
       - "4545:4545"
