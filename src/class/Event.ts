@@ -117,7 +117,7 @@ export class Event {
                 title: data.title,
                 description: data.description,
                 datetime: data.datetime,
-                price: Number(data.price),
+                price: data.price ? Number(data.price) : undefined,
                 ticketUrl: data.ticketUrl,
                 week: data.datetime ? getWeekNumber(data.datetime) : undefined,
                 location: JSON.stringify(data.location),
