@@ -123,9 +123,7 @@ export class Event {
                 location: JSON.stringify(data.location),
                 bands: data.bands ? { set: [], connect: data.bands.map((band) => ({ id: band.id })) } : undefined,
                 artists: data.artists ? { set: [], connect: data.artists.map((artist) => ({ id: artist.id })) } : undefined,
-                image: data.image
-                    ? saveFile(`/events/${this.id}`, { name: this.id + new Date().getTime().toString(), base64: data.image }).url
-                    : undefined,
+                image: data.image,
             },
             include: event_include,
         })
