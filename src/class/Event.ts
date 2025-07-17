@@ -6,6 +6,7 @@ import { uid } from "uid"
 import { getWeekNumber } from "../tools/getWeekNumber"
 import { saveFile } from "../tools/saveFile"
 import { UploadedFile } from "express-fileupload"
+import { WithoutFunctions } from "./helpers"
 
 export const event_include = Prisma.validator<Prisma.EventInclude>()({
     bands: { include: band_include },
@@ -13,7 +14,7 @@ export const event_include = Prisma.validator<Prisma.EventInclude>()({
 })
 
 export type EventPrisma = Prisma.EventGetPayload<{ include: typeof event_include }>
-export type EventForm = Omit<Event, "id" | "image"> & { image?: string }
+export type EventForm = Omit<WithoutFunctions<Event>, "id" | "image"> & { image?: string }
 
 export interface Location {
     street: string
