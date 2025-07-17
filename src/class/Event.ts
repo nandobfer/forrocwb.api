@@ -5,6 +5,7 @@ import { Artist } from "./Artist"
 import { uid } from "uid"
 import { getWeekNumber } from "../tools/getWeekNumber"
 import { saveFile } from "../tools/saveFile"
+import { UploadedFile } from "express-fileupload"
 
 export const event_include = Prisma.validator<Prisma.EventInclude>()({
     bands: { include: band_include },
@@ -129,6 +130,13 @@ export class Event {
             include: event_include,
         })
         this.load(result)
+    }
+
+    async updateImage(file: UploadedFile) {
+        const { url } = saveFile(`/events/${this.id}`, { name: file.name, file: file.data })
+        await this.update({ image: url })
+
+        return url
     }
 
     async delete() {

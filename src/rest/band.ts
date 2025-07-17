@@ -41,8 +41,6 @@ router.post("/", authenticate, async (request: AuthenticatedRequest, response: R
 })
 
 router.patch("/", requireBandId, authenticate, async (request: AuthenticatedRequest & BandRequest, response: Response) => {
-    const data = request.body as BandForm
-
     try {
         const band = request.band!
         const image = request.files?.image

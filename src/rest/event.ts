@@ -3,6 +3,7 @@ import { Event, EventForm } from "../class/Event"
 import { authenticate, AuthenticatedRequest } from "../middlewares/authenticate"
 import { LogAction, LogTarget } from "../class/Log"
 import { EventRequest, requireEventId } from "../middlewares/requireEventId"
+import { UploadedFile } from "express-fileupload"
 
 const router = express.Router()
 
@@ -37,11 +38,17 @@ router.post("/", authenticate, async (request: AuthenticatedRequest, response: R
 })
 
 router.patch("/", requireEventId, authenticate, async (request: AuthenticatedRequest & EventRequest, response: Response) => {
-    const data = request.body as Partial<EventForm>
-
     try {
         const event = request.event!
-        await event.update(data)
+
+        const image = request.files?.image
+        if (image) {
+            await event.updateImage(image as UploadedFile)
+        } else {
+            const data = request.body as Partial<EventForm>
+            await event.update(data)
+        }
+
         request.user?.log({
             action: LogAction.update,
             message: `atualizou o evento (${event.id}) ${event.title}.`,
