@@ -6,7 +6,10 @@ import { Event, event_include } from "./Event"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
 
-export const artist_include = Prisma.validator<Prisma.ArtistInclude>()({ _count: { select: { events: true, bands: true } } })
+export const artist_include = Prisma.validator<Prisma.ArtistInclude>()({
+    _count: { select: { events: true, bands: true } },
+    bands: { include: { _count: { select: { events: true } } } },
+})
 export type ArtistPrisma = Prisma.ArtistGetPayload<{ include: typeof artist_include }>
 export interface ArtistForm {
     name: string
@@ -25,6 +28,8 @@ export class Artist {
     birthdate: string | null
     events: number
     bands: number
+    eventsWithoutBand: number
+    eventsAsBand: number
 
     static async new(data: ArtistForm) {
         const new_artist = await prisma.artist.create({
@@ -57,7 +62,9 @@ export class Artist {
         this.image = data.image
         this.instagram = data.instagram
         this.bands = data._count.bands
-        this.events = data._count.bands
+        this.eventsAsBand = data.bands.reduce((count, band) => (band._count.events += count), 0)
+        this.eventsWithoutBand = data._count.events
+        this.events = this.eventsAsBand + this.eventsWithoutBand
     }
 
     load(data: ArtistPrisma) {
@@ -68,7 +75,9 @@ export class Artist {
         this.image = data.image
         this.instagram = data.instagram
         this.bands = data._count.bands
-        this.events = data._count.events
+        this.eventsAsBand = data.bands.reduce((count, band) => (band._count.events += count), 0)
+        this.eventsWithoutBand = data._count.events
+        this.events = this.eventsAsBand + this.eventsWithoutBand
     }
 
     async update(data: Partial<ArtistForm>) {
