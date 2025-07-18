@@ -1,12 +1,12 @@
 import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma"
 import { uid } from "uid"
-import { Artist } from "./Artist"
+import { Artist, artist_include } from "./Artist"
 import { Event, event_include } from "./Event"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
 
-export const band_include = Prisma.validator<Prisma.BandInclude>()({ artists: true })
+export const band_include = Prisma.validator<Prisma.BandInclude>()({ artists: { include: artist_include }, _count: { select: { events: true } } })
 export type BandPrisma = Prisma.BandGetPayload<{ include: typeof band_include }>
 export interface BandForm {
     name: string
@@ -23,6 +23,7 @@ export class Band {
     image: string | null
     instagram: string | null
     artists: Artist[]
+    events: number
 
     static async new(data: BandForm) {
         const new_band = await prisma.band.create({
@@ -54,6 +55,7 @@ export class Band {
         this.artists = data.artists.map((artist) => new Artist(artist))
         this.image = data.image
         this.instagram = data.instagram
+        this.events = data._count.events
     }
 
     load(data: BandPrisma) {
@@ -63,6 +65,7 @@ export class Band {
         this.artists = data.artists.map((artist) => new Artist(artist))
         this.image = data.image
         this.instagram = data.instagram
+        this.events = data._count.events
     }
 
     async update(data: Partial<BandForm>) {

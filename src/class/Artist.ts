@@ -6,7 +6,8 @@ import { Event, event_include } from "./Event"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
 
-export type ArtistPrisma = Prisma.ArtistGetPayload<{}>
+export const artist_include = Prisma.validator<Prisma.ArtistInclude>()({ _count: { select: { events: true, bands: true } } })
+export type ArtistPrisma = Prisma.ArtistGetPayload<{ include: typeof artist_include }>
 export interface ArtistForm {
     name: string
     description?: string
@@ -22,6 +23,8 @@ export class Artist {
     image: string | null
     instagram: string | null
     birthdate: string | null
+    events: number
+    bands: number
 
     static async new(data: ArtistForm) {
         const new_artist = await prisma.artist.create({
@@ -29,18 +32,19 @@ export class Artist {
                 id: uid(),
                 name: data.name,
             },
+            include: artist_include,
         })
 
         return new Artist(new_artist)
     }
 
     static async getAll() {
-        const data = await prisma.artist.findMany({})
+        const data = await prisma.artist.findMany({ include: artist_include })
         return data.map((item) => new Artist(item))
     }
 
     static async findById(id: string) {
-        const data = await prisma.artist.findUnique({ where: { id } })
+        const data = await prisma.artist.findUnique({ where: { id }, include: artist_include })
         if (data) return new Artist(data)
         return null
     }
@@ -52,6 +56,8 @@ export class Artist {
         this.birthdate = data.birthdate
         this.image = data.image
         this.instagram = data.instagram
+        this.bands = data._count.bands
+        this.events = data._count.bands
     }
 
     load(data: ArtistPrisma) {
@@ -61,6 +67,8 @@ export class Artist {
         this.birthdate = data.birthdate
         this.image = data.image
         this.instagram = data.instagram
+        this.bands = data._count.bands
+        this.events = data._count.events
     }
 
     async update(data: Partial<ArtistForm>) {
@@ -73,6 +81,7 @@ export class Artist {
                 image: data.image,
                 instagram: data.instagram,
             },
+            include: artist_include,
         })
         this.load(result)
     }

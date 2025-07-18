@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { Band, band_include } from "./Band"
 import { prisma } from "../prisma"
-import { Artist } from "./Artist"
+import { Artist, artist_include } from "./Artist"
 import { uid } from "uid"
 import { getWeekNumber } from "../tools/getWeekNumber"
 import { saveFile } from "../tools/saveFile"
@@ -10,7 +10,7 @@ import { WithoutFunctions } from "./helpers"
 
 export const event_include = Prisma.validator<Prisma.EventInclude>()({
     bands: { include: band_include },
-    artists: true,
+    artists: { include: artist_include },
 })
 
 export type EventPrisma = Prisma.EventGetPayload<{ include: typeof event_include }>
