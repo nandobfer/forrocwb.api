@@ -57,6 +57,25 @@ export class Event {
         return null
     }
 
+    static async clone(originalEvent: Event) {
+        const currentEventDate = new Date(Number(originalEvent.datetime))
+        const nextWeekDatetime = currentEventDate.setTime(currentEventDate.getTime() + 1000 * 60 * 60 * 24 * 7)
+        const event = await Event.new({
+            artists: originalEvent.artists,
+            bands: originalEvent.bands,
+            datetime: nextWeekDatetime.toString(),
+            description: originalEvent.description,
+            location: originalEvent.location,
+            price: originalEvent.price,
+            ticketUrl: originalEvent.ticketUrl,
+            title: originalEvent.title,
+            week: originalEvent.week + 1,
+            image: originalEvent.image || undefined,
+        })
+
+        return event
+    }
+
     static async new(data: EventForm) {
         const result = await prisma.event.create({
             data: {

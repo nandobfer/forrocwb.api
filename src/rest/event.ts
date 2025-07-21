@@ -79,4 +79,21 @@ router.delete("/", requireEventId, authenticate, async (request: AuthenticatedRe
     }
 })
 
+router.post("/clone", authenticate, requireEventId, async (request: AuthenticatedRequest & EventRequest, response: Response) => {
+    try {
+        const originalEvent = request.event!
+        const event = await Event.clone(originalEvent)
+        request.user?.log({
+            action: LogAction.create,
+            message: `clonou o evento (${originalEvent.id}) ${originalEvent.title} para (${event.id}) ${event.title}.`,
+            target: LogTarget.event,
+            request_ip: request.clientIp,
+        })
+        return response.json(event)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router
